@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<script>
+$(function(){
+    $('#btn_sub').click(function(){
+        alert($("#pic_index").is(':checked'));
+        alert($("input[type='radio']:checked").val());
+    });
+
+})
+</script>
+<hr>
+<div class="checkbox"  id="pic_index">
+    <label>
+        <input type="checkbox" name="pic_index" value="">
+        设置到首页
+    </label>
+</div>
+<hr>
+<div id="path_active">
+选择展示页
+{% for img_path in picture.path %}
+    <div class="radio radio-inline">
+        <label>
+            <img src='{{ img_path.path_ }}?imageView2/2/w/100/h/100'>
+            <input type="radio" name="path_active" value={{ img_path.id }}>
+        </label>
+    </div>
+{% endfor %}
+</div>
+<hr>
+<div class="checkbox" id="del_pic">
+    <label>
+        <input type="checkbox" id="del_pic" name="del_pic" value="">
+        删除此组页面
+    </label>
+</div>
+<hr>
+<button class="btn btn-default" id="btn_sub">提交</button>
+
+
+{% endblock %}

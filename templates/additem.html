@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}<title>加新图片组</title>{% endblock %}
+{% block content %}
+<script>
+$(function(){
+    $('#submit').click(function(){
+        $('#upload_pic').modal('show');
+        $('#upload_pic').on('shown.bs.modal', function(){
+            $('#status_words').text('正在上传图片...');
+        });
+        $.ajax({
+            type:'post',
+            url:location.href,
+            dataType:'json',
+            contentType:'application/json',
+            data:JSON.stringify({'url': $('#input').val()}),
+            success:
+                function(data, status){
+                    if(data['good'] == '1')
+                    {
+                        $('#status_words').text('上传完成');
+                        window.location.href='/item/' + data['picture_id'];
+                    }
+                    else
+                    {
+                        $('#status_words').text('上传失败');
+                        window.location.href='/';
+                    }
+                }
+        });
+    });
+})
+</script>
+<div class="modal fade" id="upload_pic" tabindex="-1" role="dialog" aria-labelledby="上传状态" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h1 id="status_words"></h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label>源地址：</label>
+    <input id='input' type="text" class="form-control" placeholder="请写入图片源地址" name="URL">
+    <button id="submit" class="btn btn-lg">提交</button>
+</div>
+{% endblock %}

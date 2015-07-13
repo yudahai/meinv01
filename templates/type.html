@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}
+    <title>{{pictures[0].type}}</title>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="container">
+        <dl>
+        {% if pictures %}
+            {% for picture in pictures %}
+            <div class="col-md-4">
+                <dt><h3>{{picture.title}}</h3></dt>
+                <dd>
+                    <a href={{url_for('item', picture_id=picture.id)}}>
+                        <img src={{ picture.path[0].path_ }} class="img-thumbnail" alt={{picture.title}}>
+                    </a>
+                </dd>
+            </div>
+            {% endfor %}
+        {% endif %}
+        </dl>
+        </div>
+    </div>
+{% endblock %}

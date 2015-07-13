@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}<title>美女网</title>{% endblock %}
+{% block content %}
+    <div class="row">
+        {% for picture in pictures %}
+        {% if picture.path %}
+        <div class="col-md-3">
+            <div>
+            <h5>{{picture.title}}</h5>
+            <a href={{url_for('item', picture_id=picture.id)}}>
+                <img src='{{ picture.path[0].path_ }}?imageView2/2/w/400/h/400' class="img-thumbnail" alt={{picture.title}}>
+            </a>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

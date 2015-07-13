@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}<title>{{ picture.title }}</title>{% endblock%}
+
+{% block content%}
+<h1>{{picture.title}}</h1>
+
+<script>
+    $(function(){
+        $('.label-info').click(function(){
+            $(this).attr('class', 'label label-success');
+        });
+
+        $('#add_tag').click(function(){
+            var add_tag = new Array();
+            $('.label-success').each(function(){
+                var pic_tag = $(this);
+                add_tag.push(pic_tag.attr('tag_id'));
+                pic_tag.insertBefore($('#del_tag'));
+                pic_tag.attr('class', 'label label-info');
+            });
+            $.ajax({
+                url:window.location.href,
+                type:'post',
+                dataType:'json',
+                contentType:'application/json',
+                data:JSON.stringify({1: add_tag})
+            })
+        });
+
+        $('#del_tag').click(function(){
+            var del_tag = new Array();
+            $('.label-success').each(function(){
+                var pic_tag = $(this);
+                del_tag.push(pic_tag.attr('tag_id'));
+                pic_tag.insertBefore($('#add_tag'));
+                pic_tag.attr('class', 'label label-info');
+            });
+            $.ajax({
+                url:window.location.href,
+                type:'post',
+                dataType:'json',
+                contentType:'application/json',
+                data:JSON.stringify({2: del_tag})
+            })
+        });
+    })
+</script>
+<div id="add">
+    <label>可供选择：</label>
+    {% for tag in left_tags %}
+            <span class="label label-info" tag_id={{tag.id}}>{{ tag.name }}</span>
+    {% endfor %}
+    <button id="add_tag"><span class="glyphicon glyphicon-plus-sign"></span></button>
+</div>
+<div id="del">
+    <label>已经存在：</label>
+    {% for tag in picture.tag %}
+            <span class="label label-info" tag_id={{tag.id}}>{{ tag.name }}</span>
+    {% endfor %}
+    <button id="del_tag"><span class="glyphicon glyphicon-minus-sign"></span></button>
+</div>
+
+
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+   <!-- 轮播（Carousel）指标 -->
+   <ol class="carousel-indicators">
+      {% for path_ in picture.path %}
+        {% if loop.index==1%}
+            <li data-target="#myCarousel" data-slide-to={{loop.index-1}} class="active"></li>
+        {% else %}
+            <li data-target="#myCarousel" data-slide-to={{loop.index-1}}></li>
+        {% endif %}
+       {% endfor %}
+   </ol>
+   <!-- 轮播（Carousel）项目 -->
+   <div class="carousel-inner" role="listbox">
+       {% for path_ in picture.path %}
+            {% if loop.index == 1%}
+               <div class="item active">
+                   <div class="row">
+                       <div class="col-lg-3"></div>
+                       <div class="col-lg-6">
+                            <img src={{ path_.path_ }}>
+                       </div>
+                       <div class="col-lg-3"></div>
+                   </div>
+               </div>
+            {% else %}
+                <div class="item">
+                    <div class="row">
+                       <div class="col-lg-3"></div>
+                       <div class="col-lg-6">
+                            <img src={{ path_.path_ }}>
+                       </div>
+                       <div class="col-lg-3"></div>
+                   </div>
+               </div>
+            {% endif %}
+       {% endfor %}
+   </div>
+   <!-- 轮播（Carousel）导航 -->
+   <a class="carousel-control left" href="#myCarousel" role="button"
+      data-slide="prev">
+       <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+       <span class="sr-only">Previous</span>
+   </a>
+   <a class="carousel-control right" href="#myCarousel" role="button"
+      data-slide="next">
+       <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+       <span class="sr-only">Next</span>
+   </a>
+</div>
+
+{% endblock %}
+{% block judge %}
+<script>
+    $(function(){
+        $('#btn_like').click(function(){
+            if ($.cookie('{{picture.id}}'))
+            {
+                alert('等到明天再评论吧');
+                return;
+            }
+            var n = $(this).prev("span").text();
+            $(this).prev("span").text(Number(n) + 1);
+            $.ajax({
+                url:window.location.href,
+                type:'post',
+                dataType:'json',
+                contentType:'application/json',
+                data:JSON.stringify({3: 1})
+            });
+            $.cookie('{{picture.id}}', '1', {expire: 1});
+        });
+
+
+    })
+</script>
+<div id="like">
+    <label>点个赞：</label>
+    <span class="label label-info">{{ picture.like }}</span>
+    <button id="btn_like"><span class="glyphicon glyphicon-heart"></span></button>
+</div>
+
+<div id="collect">
+    <label>收藏：</label>
+    <button id="btn_collect"><span class="glyphicon glyphicon-saved"></span></button>
+</div>
+{% endblock %}
