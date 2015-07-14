@@ -23,8 +23,8 @@ $(function(){
                     }
                     else
                     {
-                        $('#status_words').text('上传失败');
-                        window.location.href='/';
+                        $('#status_words').text(data['msg']);
+                        setTimeout(function(){window.location.href='/'}, 5000);
                     }
                 }
         });

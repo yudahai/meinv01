@@ -1,25 +1,53 @@
-{% extends "base.html" %}
-{% block title %}
-    <title>{{pictures[0].type}}</title>
-{% endblock %}
-
+{% extends 'base.html' %}
+{% block title %}<title>加type</title>{% endblock %}
 {% block content %}
-    <div class="row">
-        <div class="container">
-        <dl>
-        {% if pictures %}
-            {% for picture in pictures %}
-            <div class="col-md-4">
-                <dt><h3>{{picture.title}}</h3></dt>
-                <dd>
-                    <a href={{url_for('item', picture_id=picture.id)}}>
-                        <img src={{ picture.path[0].path_ }} class="img-thumbnail" alt={{picture.title}}>
-                    </a>
-                </dd>
-            </div>
-            {% endfor %}
-        {% endif %}
-        </dl>
-        </div>
-    </div>
+<script>
+    $(function(){
+        $('.label-info').click(function(){
+            $(this).attr('class', 'label label-success');
+        });
+
+        $('#add_tag').click(function(){
+            var add_tag = new Array();
+            $('.label-success').each(function(){
+                var pic_tag = $(this);
+                add_tag.push(pic_tag.attr('tag_id'));
+                pic_tag.insertBefore($('#del_tag'));
+                pic_tag.attr('class', 'label label-info');
+            });
+            $.ajax({
+                url:window.location.href,
+                type:'post',
+                dataType:'json',
+                contentType:'application/json',
+                data:JSON.stringify({1: add_tag})
+            })
+        });
+
+        $('#del_tag').click(function(){
+            var del_tag = new Array();
+            $('.label-success').each(function(){
+                var pic_tag = $(this);
+                del_tag.push(pic_tag.attr('tag_id'));
+                pic_tag.insertBefore($('#add_tag'));
+                pic_tag.attr('class', 'label label-info');
+            });
+            $.ajax({
+                url:window.location.href,
+                type:'post',
+                dataType:'json',
+                contentType:'application/json',
+                data:JSON.stringify({2: del_tag})
+            })
+        });
+    })
+</script>
+<div id="add">
+    <label>可供选择：</label>
+    {% for type in types %}
+            <span class="label label-info" type_id={{type.id}}>{{ type.name }}</span>
+    {% endfor %}
+    <button id="add_type"><span class="glyphicon glyphicon-plus-sign"></span></button>
+    <button id="del_tag"><span class="glyphicon glyphicon-minus-sign"></span></button>
+</div>
 {% endblock %}

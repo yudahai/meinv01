@@ -57,8 +57,8 @@ def add_item():
         try:
             title, imgs = soup_pic(url)
             picture_id = upload_and_db(title, imgs)
-        except:
-            return jsonify({'good': '2'})
+        except AttributeError as e:
+            return jsonify({'good': '2', 'msg': e.message})
         return jsonify({'good': '1', 'picture_id': picture_id})
 
 
@@ -86,6 +86,17 @@ def setting(picture_id):
         print "del_pic:" + request.form['del_pic']
         return redirect(url_for('index'))
 
+
+@app.route('/type', methods=['POST', 'GET'])
+def type_():
+    types = db_session.query(PicType).all()
+    if request.method == 'GET':
+        return render_template('type.html', types=types)
+    elif request.method == 'POST':
+        new_type = request.form['type']
+        db_session.add(PicType(name=new_type))
+        db_session.commit()
+        return redirect(url_for('type_'))
 '''
 @app.route('/picture/<int:path_id>')
 def show_picture(path_id):

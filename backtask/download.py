@@ -170,5 +170,5 @@ def download_pic(x):
 
 
 if __name__ == '__main__':
-    title, imgs = soup_pic('http://www.xiaodaimeng.net/meituikong/5042.html')
+    title, imgs = soup_pic('http://www.xiaodaimeng.net/meit3444ong/5042.html')
     upload_and_db(title, imgs)

@@ -24,6 +24,9 @@ class Picture(Base):
     like = Column(Integer, index=True, default=0)
     click = Column(Integer, index=True, default=0)
     tag = relationship("Tag", secondary=picture_tag, backref="picture")
+    active_path_id = Column(Integer, ForeignKey('path.id'))
+
+    active_path = relationship("Path", foreign_keys=[active_path_id])
 
 
 class PicType(Base):
@@ -49,7 +52,7 @@ class Path(Base):
     path_ = Column(String(80), index=True)
     picture_id = Column(Integer, ForeignKey('picture.id'))
 
-    picture = relationship("Picture", backref=backref("path"))
+    picture = relationship("Picture", foreign_keys=[picture_id], backref=backref("path"))
 
 
 db_session = scoped_session(sessionmaker(autocommit=False,
@@ -59,4 +62,7 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 Base.query = db_session.query_property()
 
 if __name__ == '__main__':
-    Base.metadata.create_all(engine)
+    #Base.metadata.create_all(engine)
+    new_pic = Picture(title=100, pic_type_id=900)
+    db_session.add(new_pic)
+    db_session.commit()

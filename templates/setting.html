@@ -3,10 +3,10 @@
 <script>
 $(function(){
     $('#btn_sub').click(function(){
-        alert($("#pic_index").is(':checked'));
-        alert($("input[type='radio']:checked").val());
+        alert($("#pic_index input[type='checkbox']").is(':checked'));
+        alert($("#path_active input[type='radio']:checked").val());
+        alert($("#del_pic input[type='checkbox]").is(':checked'));
     });
-
 })
 </script>
 <hr>
@@ -31,12 +31,10 @@ $(function(){
 <hr>
 <div class="checkbox" id="del_pic">
     <label>
-        <input type="checkbox" id="del_pic" name="del_pic" value="">
+        <input type="checkbox" name="del_pic" value="">
         删除此组页面
     </label>
 </div>
 <hr>
 <button class="btn btn-default" id="btn_sub">提交</button>
-
-
 {% endblock %}
