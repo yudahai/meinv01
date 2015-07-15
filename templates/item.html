@@ -44,14 +44,14 @@
         });
     })
 </script>
-<div id="add">
+<div id="add_tag">
     <label>可供选择：</label>
     {% for tag in left_tags %}
             <span class="label label-info" tag_id={{tag.id}}>{{ tag.name }}</span>
     {% endfor %}
     <button id="add_tag"><span class="glyphicon glyphicon-plus-sign"></span></button>
 </div>
-<div id="del">
+<div id="del_tag">
     <label>已经存在：</label>
     {% for tag in picture.tag %}
             <span class="label label-info" tag_id={{tag.id}}>{{ tag.name }}</span>
@@ -65,7 +65,7 @@
    <!-- 轮播（Carousel）指标 -->
    <ol class="carousel-indicators">
       {% for path_ in picture.path %}
-        {% if loop.index==1%}
+        {% if loop.index==1 %}
             <li data-target="#myCarousel" data-slide-to={{loop.index-1}} class="active"></li>
         {% else %}
             <li data-target="#myCarousel" data-slide-to={{loop.index-1}}></li>
@@ -136,6 +136,11 @@
 
     })
 </script>
+<a href={{ url_for('add_item') }}>增加图片</a>
+<div id="setting">
+    <label>设置</label>
+    <a href={{ url_for('setting', picture_id=picture.id) }}>进入设置页面</a>
+</div>
 <div id="like">
     <label>点个赞：</label>
     <span class="label label-info">{{ picture.like }}</span>

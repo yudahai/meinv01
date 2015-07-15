@@ -7,47 +7,43 @@
             $(this).attr('class', 'label label-success');
         });
 
-        $('#add_tag').click(function(){
-            var add_tag = new Array();
+        $('#del_type').click(function(){
+            var del_type_ids = new Array();
             $('.label-success').each(function(){
-                var pic_tag = $(this);
-                add_tag.push(pic_tag.attr('tag_id'));
-                pic_tag.insertBefore($('#del_tag'));
-                pic_tag.attr('class', 'label label-info');
+                var del_type_id = $(this).attr('type_id');
+                del_type_ids.push(del_type_id);
             });
             $.ajax({
-                url:window.location.href,
                 type:'post',
+                url:window.location.href,
                 dataType:'json',
                 contentType:'application/json',
-                data:JSON.stringify({1: add_tag})
-            })
+                data:JSON.stringify({2: del_type_ids})
+            });
         });
 
-        $('#del_tag').click(function(){
-            var del_tag = new Array();
-            $('.label-success').each(function(){
-                var pic_tag = $(this);
-                del_tag.push(pic_tag.attr('tag_id'));
-                pic_tag.insertBefore($('#add_tag'));
-                pic_tag.attr('class', 'label label-info');
-            });
-            $.ajax({
-                url:window.location.href,
-                type:'post',
-                dataType:'json',
-                contentType:'application/json',
-                data:JSON.stringify({2: del_tag})
-            })
-        });
+        $('#add_type').click(function(){
+            $('#add_form').removeAttr('hidden');
+        })
     })
 </script>
-<div id="add">
+<div>
     <label>可供选择：</label>
     {% for type in types %}
             <span class="label label-info" type_id={{type.id}}>{{ type.name }}</span>
     {% endfor %}
     <button id="add_type"><span class="glyphicon glyphicon-plus-sign"></span></button>
-    <button id="del_tag"><span class="glyphicon glyphicon-minus-sign"></span></button>
+    <button id="del_type"><span class="glyphicon glyphicon-minus-sign"></span></button>
+    <div id="add_form" hidden="">
+        <form action="/addtype" method="post">
+        <div class="form-group">
+            <label>类型：</label>
+            <input type="text" class="form-control" placeholder="请写入类型名" name="type">
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-lg">
+        </div>
+    </form>
+    </div>
 </div>
 {% endblock %}

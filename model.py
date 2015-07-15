@@ -1,5 +1,6 @@
 #coding:utf-8
-from sqlalchemy import create_engine, ForeignKey, Column, Integer, String, SmallInteger, Table, and_, Enum
+from sqlalchemy import create_engine, ForeignKey, Column, Integer, String, \
+    SmallInteger, Table, and_, Enum, Boolean
 from sqlalchemy.orm import relationship, backref, sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 from conf.util import sql_user, sql_password
@@ -25,7 +26,7 @@ class Picture(Base):
     click = Column(Integer, index=True, default=0)
     tag = relationship("Tag", secondary=picture_tag, backref="picture")
     active_path_id = Column(Integer, ForeignKey('path.id'))
-
+    index = Column(Boolean, index=True, default=0)
     active_path = relationship("Path", foreign_keys=[active_path_id])
 
 

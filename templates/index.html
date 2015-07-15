@@ -8,7 +8,7 @@
             <div>
             <h5>{{picture.title}}</h5>
             <a href={{url_for('item', picture_id=picture.id)}}>
-                <img src='{{ picture.path[0].path_ }}?imageView2/2/w/400/h/400' class="img-thumbnail" alt={{picture.title}}>
+                <img src='{{ picture.active_path.path_ }}?imageView2/2/w/400/h/400' class="img-thumbnail" alt={{picture.title}}>
             </a>
             </div>
         </div>

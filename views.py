@@ -1,7 +1,9 @@
 #coding:utf-8
-from flask import Flask, session, redirect, url_for, request, flash, render_template, Markup, g, jsonify, stream_with_context, Response
+from flask import Flask, session, redirect, url_for, request, flash, render_template, Markup, g, jsonify, \
+    stream_with_context, Response, abort
 from backtask.download import upload_and_db, soup_pic
 from model import *
+from wtforms import Form, BooleanField, TextField, PasswordField, validators, StringField, SelectField, RadioField
 
 
 app = Flask(__name__)
@@ -15,7 +17,7 @@ def handle_teardown_request(excetion):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    pictures = db_session.query(Picture).limit(100)
+    pictures = db_session.query(Picture).filter(Picture.index).limit(100)
     return render_template('index.html', pictures=pictures)
 
 
@@ -74,17 +76,36 @@ def tag():
         return redirect(url_for('tag'))
 
 
-
 @app.route('/setting/<int:picture_id>', methods=['POST', 'GET'])
 def setting(picture_id):
-    if request.method == 'GET':
-        picture = db_session.query(Picture).get(picture_id)
-        return render_template('setting.html', picture=picture)
-    elif request.method == 'POST':
-        print "pic_index:" + request.form['pic_index']
-        print "path_active:" + request.form['path_active']
-        print "del_pic:" + request.form['del_pic']
-        return redirect(url_for('index'))
+    picture = db_session.query(Picture).get(picture_id)
+    types = db_session.query(PicType).all()
+    class SettingForm(Form):
+        del_pic = BooleanField(u'是否删除本页面？', [validators.required()], default=False)
+        index_pic = BooleanField(u'设置本组图片首页？', [validators.required()], default=picture.index)
+        active_path = RadioField(u'选择一个图片作为前台',[validators.required()],
+                                 choices=[(path.id, "<img src="+path.path_+"?imageView2/2/w/80/h/80>") for path in picture.path],
+                                 default=picture.active_path_id if picture.active_path_id else picture.path[0].id)
+        pic_type = RadioField(u'选择图片组类型', [validators.required()],
+                              choices=[(_pic_type.id, _pic_type.name) for _pic_type in types],
+                              default=picture.pic_type_id if picture.pic_type_id else types[0].id)
+    if request.remote_addr != '127.0.0.1':
+        abort(404)
+    else:
+        form = SettingForm(request.form)
+        if request.method == 'GET':
+            return render_template('setting.html', picture=picture, form=form)
+        elif request.method == 'POST':
+            if form.del_pic.data:
+                db_session.query(Path).filter(Path.picture_id == picture_id).delete()
+                db_session.query(Picture).filter(Picture.id == picture_id).delete()
+            else:
+                picture.index = form.index_pic.data
+                picture.active_path_id = form.active_path.data
+                picture.pic_type_id = form.pic_type.data
+            db_session.commit()
+            return redirect(url_for('index'))
+
 
 
 @app.route('/type', methods=['POST', 'GET'])
@@ -93,28 +114,30 @@ def type_():
     if request.method == 'GET':
         return render_template('type.html', types=types)
     elif request.method == 'POST':
+        del_type_ids = request.get_json()['2']
+        for del_type_id in del_type_ids:
+            db_session.query(PicType).filter(PicType.id == del_type_id).delete()
+        db_session.commit()
+        return redirect(url_for('type_'))
+
+
+@app.route('/addtype', methods=['POST'])
+def addtype():
+    if request.method == 'GET':
+        abort(404)
+        redirect(url_for('index'))
+    elif request.method == 'POST':
         new_type = request.form['type']
         db_session.add(PicType(name=new_type))
         db_session.commit()
         return redirect(url_for('type_'))
-'''
-@app.route('/picture/<int:path_id>')
-def show_picture(path_id):
-    path_ = db_session.query(Path).get(path_id).path_
-    img = Image.open(path_)
-    stream = StringIO.StringIO()
-    img.save(stream, "JPEG")
-    buf_str = stream.getvalue()
-    response = app.make_response(buf_str)
-    response.headers['Content-Type'] = 'image/jpg'
-    return response
-'''
 
 
-@app.route('/type/<int:type_id>')
-def show_type(type_id):
-    pictures = db_session.query(Picture).filter(and_(Picture.type == type_id, Picture.path != None, Picture.title != None)).limit(10)
-    return render_template('type.html', pictures=pictures)
+@app.route('/showtype/<int:type_id>')
+def showtype(type_id):
+    pictures = db_session.query(Picture).filter(Picture.pic_type_id == type_id).all()
+    return render_template('showtype.html', pictures=pictures)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

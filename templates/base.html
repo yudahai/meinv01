@@ -17,9 +17,10 @@
         <div class="col-md-4">
             <ul class="nav nav-tabs">
                 <li role="presentation"><a href={{url_for('index')}}> 首页</a></li>
-                <li role="presentation"><a href={{url_for('show_type', type_id=1)}}> 性感</a></li>
-                <li role="presentation"><a href={{url_for('show_type', type_id=2)}}> 清纯</a></li>
-                <li role="presentation"><a href={{url_for('show_type', type_id=3)}}> 自拍</a></li>
+                <li role="presentation"><a href={{ url_for('showtype', type_id=1) }}> 性感</a></li>
+                <li role="presentation"><a href={{ url_for('showtype', type_id=3) }}> 清纯</a></li>
+                <li role="presentation"><a href={{ url_for('showtype', type_id=4) }}> 自拍</a></li>
+                <li role="presentation"><a href={{ url_for('showtype', type_id=5) }}> 欧美</a></li>
              </ul>
         </div>
         <div class="col-md-4"></div>
@@ -27,7 +28,7 @@
     <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-9"> {% block content %}{% endblock %}</div>
-        <div class="col-md-2">{% block judge %}{% endblock %}</div>
+        <div class="col-md-2">{% block judge %}<a href={{ url_for('add_item') }}>增加图片</a>{% endblock %}</div>
     </div>
 </div>
 </body>
